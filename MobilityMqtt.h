@@ -1,7 +1,18 @@
-#include <WiFi.h>
+#ifndef __MOBILITY_MQTT_H__
+#define __MOBILITY_MQTT_H__
 
-void mqtt_setup(WiFiClient* wifiClient);
+#include "WiFi.h"
+#include <PubSubClient.h>
+
+void mqtt_setup(Client& wifiClient);
 void mqtt_loop();
 void mqtt_check_and_reconnect();
 void mqtt_ping(bool);
+
+extern void (*mqtt_subscribe_callback)(void);
+
+
+#endif // __MOBILITY_MQTT_H__
+
+
 

@@ -1,12 +1,11 @@
 #include "MobilityMqtt.h"
-#include <PubSubClient.h>
 
 /**************
  * Constants, Macro
  **************/
 
 const char* PUBLISH_TOPIC = "/mooba/status";
-const char* SUBSCRIBE_TOPIC = "/mooba/event";
+const char* SUBSCRIBE_TOPIC = "/mooba/request";
 const char* UUID = "3336D1CD-954F-46B7-920C-24D6F937D4ED";
 const char* MQTT_SERVER = "test.mosquitto.org";
 #define MQTT_SERVER_PORT 1883
@@ -57,18 +56,8 @@ void handleSubscription(char* topic, byte* payload, unsigned int length) {
   }
   Serial.println();
 
-//イベントの内容で判定
-
-//  // switch relay status
-//  if (relay_enabled) {
-//    Serial.println("power off");
-//    digitalWrite(PIN_RELAY, LOW); 
-//    relay_enabled = false;
-//  } else {
-//    Serial.println("power on");
-//    digitalWrite(PIN_RELAY, HIGH); 
-//    relay_enabled = true;
-//  }
+  // TODO ちゃんとわたす
+  mqtt_subscribe_callback();
 }
 
 
@@ -76,8 +65,8 @@ void handleSubscription(char* topic, byte* payload, unsigned int length) {
  * Public functions
  **************/
 
-void mqtt_setup(WiFiClient* wifiClient) {
-  mqttClient.setClient(*wifiClient);
+void mqtt_setup(Client& wifiClient) {
+  mqttClient.setClient(wifiClient);
   mqttClient.setServer(MQTT_SERVER, MQTT_SERVER_PORT);
   mqttClient.setCallback(handleSubscription);
 }

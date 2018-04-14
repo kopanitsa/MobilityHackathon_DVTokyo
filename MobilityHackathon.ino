@@ -1,18 +1,22 @@
-#include <WiFi.h>
 #include "MobilityMqtt.h"
 
 WiFiClient espClient;
 long lastMsg = 0;
 int value = 0;
 
-const char* ssid = "PublicWork";
-const char* password = "publicnet63!";
+const char* ssid = "GlocalMe_86859";
+const char* password = "42000856";
+//const char* ssid = "PublicWork";
+//const char* password = "publicnet63!";
 
 const int PIN_LED_GREEN = 13; 
 const int PIN_RELAY     = 12; 
 bool relay_enabled = false;
 
 int wifi_trial = 0;
+
+void (*mqtt_subscribe_callback)(void);
+
 
 void setup() {
   Serial.begin(115200);
@@ -22,7 +26,8 @@ void setup() {
   digitalWrite(PIN_RELAY, LOW);  // Relay off
 
   setup_wifi();
-  mqtt_setup(&espClient);
+  mqtt_setup(espClient);
+  mqtt_subscribe_callback = &subscribe_callback;
 }
 
 void setup_wifi() {
@@ -48,7 +53,6 @@ void setup_wifi() {
   Serial.println(WiFi.localIP());
 
   digitalWrite(PIN_LED_GREEN, HIGH);  // LED on
-  
 }
 
 void handlePing() {
@@ -63,9 +67,27 @@ void handlePing() {
   }
 }
 
+void subscribe_callback(void) {
+//イベントの内容で判定
+  Serial.println("get event");
+//  Serial.println(str);
+
+  // switch relay status
+  if (relay_enabled) {
+    Serial.println("power off");
+    digitalWrite(PIN_RELAY, LOW); 
+    relay_enabled = false;
+  } else {
+    Serial.println("power on");
+    digitalWrite(PIN_RELAY, HIGH); 
+    relay_enabled = true;
+  }
+  
+}
+
 void loop() {
   mqtt_check_and_reconnect();
-  mqtt_loop;
+  mqtt_loop();
   handlePing();
 }
 
