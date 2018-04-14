@@ -5,9 +5,8 @@
 #include "MobilityGpio.h"
 #include "WiFi.h"
 
-const int PIN_LED_GREEN = 13;
-const int PIN_RELAY     = 12;
-bool relay_enabled = false;
+const int PIN_LED_GREEN = 14;
+const int PIN_RELAY     = 15;
 
 void gpio_setup() {
     pinMode(PIN_LED_GREEN, OUTPUT);
@@ -21,7 +20,8 @@ void gpio_led_on(bool on) {
 }
 
 void gpio_relay_on(bool on) {
-    Serial.print("start supply: ");
+    Serial.print("supply: ");
     Serial.println(on);
     digitalWrite(PIN_RELAY, on);
+    digitalWrite(PIN_LED_GREEN, on);
 }
