@@ -7,14 +7,77 @@
 #include "MobilityWifi.h"
 #include "MobilityGpio.h"
 
-void subscribe_callback(String result);
-void handlePing();
+/**************
+ * Constants, Macro
+ **************/
 
-eCONNECTION mqttConnectionStatus = Disconnected;
-long lastMsg = 0;
-int value = 0;
+typedef enum CAR_STATUS {
+    DISCONNECTED,
+    LOW_POWER,
+    STANDBY,
+    RESERVED,
+    IN_USE
+} eSTATUS;
+eSTATUS mStatus = DISCONNECTED;
+eSTATUS mPreviousStatus = DISCONNECTED;
+
+/**************
+ * Local variables
+ **************/
+
+long mLastMsg = 0;
 
 void (*mqtt_subscribe_callback)(String result);
+
+/**************
+ * Private functions
+ **************/
+
+void subscribe_callback(const String result) {
+    Serial.println("get event");
+    Serial.println(result);
+
+    // TODO 状態に応じて値を変える
+    gpio_relay_on(true);
+}
+
+void handle_ping() {
+    long now = millis();
+    if (now - mLastMsg > 60000) {
+        mLastMsg = now;
+
+        // TODO 定期イベントを投げる
+        mqtt_ping(true);
+    }
+}
+
+void update_state() {
+    // check status has been changed
+    if (mStatus != mPreviousStatus) { return; }
+
+    // exec something based on new status
+    switch (mStatus) {
+        case DISCONNECTED:
+            gpio_led_on(false);
+            break;
+        case LOW_POWER:
+            break;
+        case STANDBY:
+            gpio_led_on(true); // after setting finished, LED lights ON.
+            break;
+        case RESERVED:
+            break;
+        case IN_USE:
+            break;
+        default:
+            break;
+    }
+    mPreviousStatus = mStatus;
+}
+
+/**************
+ * Public functions
+ **************/
 
 void controller_setup() {
     Serial.begin(115200);
@@ -23,36 +86,16 @@ void controller_setup() {
     wifi_setup();
     mqtt_setup();
     mqtt_subscribe_callback = &subscribe_callback;
-
-    // after setting finished, LED lights ON.
-    gpio_led_on(true);
 }
 
 void controller_loop() {
-    eCONNECTION ret = mqtt_check_and_reconnect();
-    if (ret != mqttConnectionStatus) {
-        // TODO 状態更新をcontrollerにおくる
-        mqttConnectionStatus = ret;
+    bool connected = mqtt_check_and_reconnect();
+    if (connected) {
+        mStatus = STANDBY; // TODO handle reserved etc
+    } else{
+        mStatus = DISCONNECTED;
     }
     mqtt_loop();
-    handlePing();
-}
-
-void subscribe_callback(String result) {
-    Serial.println("get event");
-    Serial.println(result);
-
-    // TODO 状態に応じて値を変える
-    gpio_relay_on(true);
-}
-
-void handlePing() {
-    long now = millis();
-    if (now - lastMsg > 60000) {
-        lastMsg = now;
-        ++value;
-
-        // TODO 定期イベントを投げる
-        mqtt_ping(true);
-    }
+    handle_ping();
+    update_state();
 }

@@ -5,10 +5,10 @@
 #include "MobilityWifi.h"
 #include "WiFi.h"
 
-const char* ssid = "GlocalMe_86859";
-const char* password = "42000856";
-//const char* ssid = "PublicWork";
-//const char* password = "publicnet63!";
+//const char* ssid = "GlocalMe_86859";
+//const char* password = "42000856";
+const char* ssid = "PublicWork";
+const char* password = "publicnet63!";
 
 int wifi_trial = 0;
 
