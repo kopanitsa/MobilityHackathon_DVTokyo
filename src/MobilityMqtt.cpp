@@ -21,43 +21,42 @@ int mqtt_trial = 0;
  * Private functions
  **************/
 
-void reconnect() {
-  // Loop until we're reconnected
-  while (!mqttClient.connected()) {
-    Serial.println("Attempting MQTT connection...");
-    // Attempt to connect
-    if (mqttClient.connect(UUID)) {
-      Serial.println("connected");
-      char msg[50];
-      memset(msg, 0, sizeof(msg));
-      snprintf (msg, 50, "{status: %s}", "connected");
-      mqttClient.publish(PUBLISH_TOPIC, msg);
-      mqttClient.subscribe(SUBSCRIBE_TOPIC);
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
-      mqtt_trial++;
-      if (mqtt_trial >= 40) {
-        ESP.restart();
-      }
+bool reconnect() {
+    // Loop until we're reconnected
+    while (!mqttClient.connected()) {
+        Serial.println("Attempting MQTT connection...");
+        // Attempt to connect
+        if (mqttClient.connect(UUID)) {
+            Serial.println("connected");
+            char msg[50];
+            memset(msg, 0, sizeof(msg));
+            snprintf (msg, 50, "{status: %s}", "connected");
+            mqttClient.publish(PUBLISH_TOPIC, msg);
+            mqttClient.subscribe(SUBSCRIBE_TOPIC);
+        } else {
+            Serial.print("failed, rc=");
+            Serial.print(mqttClient.state());
+            Serial.println(" try again in 5 seconds");
+            // Wait 5 seconds before retrying
+            delay(5000);
+            mqtt_trial++;
+            if (mqtt_trial >= 40) {
+                ESP.restart();
+            }
+        }
     }
-  }
 }
 
 void handleSubscription(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  for (int i = 0; i < length; i++) {
-    Serial.print((char)payload[i]);
-  }
-  Serial.println();
+    Serial.print("Message arrived! [");
+    Serial.print(topic);
+    Serial.print("] ");
+    for (int i = 0; i < length; i++) {
+        Serial.print((char)payload[i]);
+    }
+    Serial.println();
 
-  // TODO ちゃんとわたす
-  mqtt_subscribe_callback(String((char*)payload));
+    mqtt_subscribe_callback(String((char*)payload));
 }
 
 
@@ -66,19 +65,19 @@ void handleSubscription(char* topic, byte* payload, unsigned int length) {
  **************/
 
 void mqtt_setup(Client& wifiClient) {
-  mqttClient.setClient(wifiClient);
-  mqttClient.setServer(MQTT_SERVER, MQTT_SERVER_PORT);
-  mqttClient.setCallback(handleSubscription);
+    mqttClient.setClient(wifiClient);
+    mqttClient.setServer(MQTT_SERVER, MQTT_SERVER_PORT);
+    mqttClient.setCallback(handleSubscription);
 }
 
 void mqtt_loop() {
-  mqttClient.loop();  
+    mqttClient.loop();
 }
 
-void mqtt_check_and_reconnect() {
-  if (!mqttClient.connected()) {
-    reconnect();
-  }  
+eCONNECTION mqtt_check_and_reconnect() {
+    if (!mqttClient.connected()) {
+        reconnect();
+    }
 }
 
 void mqtt_ping(bool) {
@@ -87,6 +86,6 @@ void mqtt_ping(bool) {
     snprintf (msg, 50, "{status: %s}", "connected");
     Serial.print("Publish message: ");
     Serial.println(msg);
-    mqttClient.publish(PUBLISH_TOPIC, msg);  
+    mqttClient.publish(PUBLISH_TOPIC, msg);
 }
 
