@@ -31,8 +31,6 @@ bool reconnect() {
             Serial.println("connected");
             char msg[50];
             memset(msg, 0, sizeof(msg));
-            snprintf (msg, 50, "{status: %s}", "connected");
-            mMqttClient.publish(PUBLISH_TOPIC, msg);
             mMqttClient.subscribe(SUBSCRIBE_TOPIC);
         } else {
             Serial.print("failed, rc=");
@@ -82,10 +80,22 @@ bool mqtt_check_and_reconnect() {
     return mMqttClient.connected();
 }
 
-void mqtt_ping(bool) {
-    char msg[50];
+void mqtt_ping(eSTATUS status) {
+    char msg[256];
     memset(msg, 0, sizeof(msg));
-    snprintf (msg, 50, "{status: %s}", "connected");
+    if (status == IN_USE) {
+        sprintf(msg, "{\n"
+                "\t\"status\": \"inUse\", \n"
+                "\t\"deviceId\": \"1234\",\n"
+                "\t\"remainingPower\": \"10000\"\n"
+                "}");
+    } else {
+        sprintf(msg, "{\n"
+                "\t\"status\": \"standby\", \n"
+                "\t\"deviceId\": \"1234\",\n"
+                "\t\"remainingPower\": \"10000\"\n"
+                "}");
+    }
     Serial.print("Publish message: ");
     Serial.println(msg);
     mMqttClient.publish(PUBLISH_TOPIC, msg);

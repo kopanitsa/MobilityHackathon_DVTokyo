@@ -6,18 +6,12 @@
 #include "MobilityMqtt.h"
 #include "MobilityWifi.h"
 #include "MobilityGpio.h"
+#include "MobilityStatus.h"
 
 /**************
  * Constants, Macro
  **************/
 
-typedef enum CAR_STATUS {
-    DISCONNECTED,
-    LOW_POWER,
-    STANDBY,
-    RESERVED,
-    IN_USE
-} eSTATUS;
 eSTATUS mStatus = DISCONNECTED;
 eSTATUS mPreviousStatus = DISCONNECTED;
 
@@ -45,9 +39,7 @@ void handle_ping() {
     long now = millis();
     if (now - mLastMsg > 60000) {
         mLastMsg = now;
-
-        // TODO 定期イベントを投げる
-        mqtt_ping(true);
+        mqtt_ping(mStatus);
     }
 }
 
