@@ -56,4 +56,4 @@ add_custom_target(
 
 add_executable(MobilityHackathon
         src/MobilityMqtt.cpp
-        src/MobilityMqtt.h)
+        src/MobilityMqtt.h src/MobilityWifi.cpp src/MobilityWifi.h)
