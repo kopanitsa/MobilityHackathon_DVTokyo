@@ -6,7 +6,7 @@
 #include "MobilityMqtt.h"
 #include "MobilityWifi.h"
 #include "MobilityGpio.h"
-#include "MobilityStatus.h"
+#include <ArduinoJson.h>
 
 /**************
  * Constants, Macro
@@ -31,8 +31,20 @@ void subscribe_callback(const String result) {
     Serial.println("get event");
     Serial.println(result);
 
-    // TODO 状態に応じて値を変える
-    gpio_relay_on(true);
+    StaticJsonBuffer<200> jsonBuffer;
+    JsonObject& root = jsonBuffer.parseObject(result);
+    if (!root.success()) {
+        Serial.println("parseObject() failed");
+        return;
+    }
+    const char* req = root["request"];
+    if (strcmp(req, "start") == 0) {
+        gpio_relay_on(true);
+    } else if (strcmp(req, "stop") == 0) {
+        gpio_relay_on(false);
+    }
+
+    jsonBuffer.clear();
 }
 
 void handle_ping() {

@@ -78,6 +78,7 @@ include_directories("/Users/okada takahiro/.platformio/packages/framework-arduin
 include_directories("/Users/okada takahiro/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src")
 include_directories("/Users/okada takahiro/.platformio/packages/framework-arduinoespressif32/libraries/PubSubClient/src")
 include_directories("/Users/okada takahiro/Documents/Arduino/libraries/PubSubClient/src")
+include_directories("/Users/okada takahiro/Documents/Arduino/libraries/ArduinoJson/src")
 include_directories("$ENV{HOME}/.platformio/packages/toolchain-xtensa32/xtensa-esp32-elf/include")
 include_directories("$ENV{HOME}/.platformio/packages/toolchain-xtensa32/lib/gcc/xtensa-esp32-elf/5.2.0/include")
 include_directories("$ENV{HOME}/.platformio/packages/toolchain-xtensa32/lib/gcc/xtensa-esp32-elf/5.2.0/include-fixed")

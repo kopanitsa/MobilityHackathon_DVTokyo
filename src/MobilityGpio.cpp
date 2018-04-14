@@ -21,8 +21,7 @@ void gpio_led_on(bool on) {
 }
 
 void gpio_relay_on(bool on) {
-    Serial.print("power: ");
+    Serial.print("start supply: ");
     Serial.println(on);
-
     digitalWrite(PIN_RELAY, on);
 }
