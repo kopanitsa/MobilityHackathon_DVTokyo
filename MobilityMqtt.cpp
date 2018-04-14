@@ -57,7 +57,7 @@ void handleSubscription(char* topic, byte* payload, unsigned int length) {
   Serial.println();
 
   // TODO ちゃんとわたす
-  mqtt_subscribe_callback();
+  mqtt_subscribe_callback(String((char*)payload));
 }
 
 

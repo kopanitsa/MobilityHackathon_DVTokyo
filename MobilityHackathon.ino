@@ -15,7 +15,7 @@ bool relay_enabled = false;
 
 int wifi_trial = 0;
 
-void (*mqtt_subscribe_callback)(void);
+void (*mqtt_subscribe_callback)(String result);
 
 
 void setup() {
@@ -67,10 +67,10 @@ void handlePing() {
   }
 }
 
-void subscribe_callback(void) {
+void subscribe_callback(String result) {
 //イベントの内容で判定
   Serial.println("get event");
-//  Serial.println(str);
+  Serial.println(result);
 
   // switch relay status
   if (relay_enabled) {
