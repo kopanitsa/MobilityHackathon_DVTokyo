@@ -4,8 +4,8 @@
  * Constants, Macro
  **************/
 
-const char* PUBLISH_TOPIC = "/mooba/status";
-const char* SUBSCRIBE_TOPIC = "/mooba/request";
+const char* PUBLISH_TOPIC = "/dvhack18/base/notifyCarStatus";
+const char* SUBSCRIBE_TOPIC = "/dvhack18/base/requestCarStatus/1234";
 const char* UUID = "3336D1CD-954F-46B7-920C-24D6F937D4ED";
 const char* MQTT_SERVER = "test.mosquitto.org";
 #define MQTT_SERVER_PORT 1883
