@@ -1,12 +1,9 @@
 #include "MobilityMqtt.h"
 #include "MobilityWifi.h"
+#include "MobilityGpio.h"
 
 long lastMsg = 0;
 int value = 0;
-
-const int PIN_LED_GREEN = 13;
-const int PIN_RELAY     = 12;
-bool relay_enabled = false;
 
 eCONNECTION mqttConnectionStatus = Disconnected;
 
@@ -14,16 +11,14 @@ void (*mqtt_subscribe_callback)(String result);
 
 void setup() {
     Serial.begin(115200);
-    pinMode(PIN_LED_GREEN, OUTPUT);
-    pinMode(PIN_RELAY, OUTPUT);
-    digitalWrite(PIN_LED_GREEN, LOW); // LED off
-    digitalWrite(PIN_RELAY, LOW);  // Relay off
-
+    gpio_setup();
     delay(10);
     wifi_setup();
     mqtt_setup();
     mqtt_subscribe_callback = &subscribe_callback;
-    digitalWrite(PIN_LED_GREEN, HIGH);  // LED on
+
+    // after setting finished, LED lights ON.
+    gpio_led_on(HIGH);
 }
 
 // TODO Controllerクラスで実施
@@ -43,18 +38,8 @@ void subscribe_callback(String result) {
     Serial.println("get event");
     Serial.println(result);
 
-    // TODO
-//    // switch relay status
-//    if (relay_enabled) {
-//        Serial.println("power off");
-//        digitalWrite(PIN_RELAY, LOW);
-//        relay_enabled = false;
-//    } else {
-//        Serial.println("power on");
-//        digitalWrite(PIN_RELAY, HIGH);
-//        relay_enabled = true;
-//    }
-
+    // TODO 状態に応じて値を変える
+    gpio_relay_on(true);
 }
 
 void loop() {
