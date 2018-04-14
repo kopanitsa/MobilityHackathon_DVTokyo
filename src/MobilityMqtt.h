@@ -9,7 +9,7 @@ typedef enum CONNECTION {
     Disconnected
 } eCONNECTION;
 
-void mqtt_setup(Client& wifiClient);
+void mqtt_setup();
 void mqtt_loop();
 eCONNECTION mqtt_check_and_reconnect();
 void mqtt_ping(bool);

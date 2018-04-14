@@ -14,6 +14,7 @@ const char* MQTT_SERVER = "test.mosquitto.org";
  * Local variables
  **************/
 
+WiFiClient wifiClient;
 PubSubClient mqttClient;
 int mqtt_trial = 0;
 
@@ -64,7 +65,8 @@ void handleSubscription(char* topic, byte* payload, unsigned int length) {
  * Public functions
  **************/
 
-void mqtt_setup(Client& wifiClient) {
+
+void mqtt_setup() {
     mqttClient.setClient(wifiClient);
     mqttClient.setServer(MQTT_SERVER, MQTT_SERVER_PORT);
     mqttClient.setCallback(handleSubscription);

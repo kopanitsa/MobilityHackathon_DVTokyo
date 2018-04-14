@@ -1,6 +1,5 @@
 #include "MobilityMqtt.h"
 
-WiFiClient espClient;
 long lastMsg = 0;
 int value = 0;
 
@@ -28,7 +27,7 @@ void setup() {
     digitalWrite(PIN_RELAY, LOW);  // Relay off
 
     setup_wifi();
-    mqtt_setup(espClient);
+    mqtt_setup();
     mqtt_subscribe_callback = &subscribe_callback;
 }
 
@@ -63,33 +62,36 @@ void handlePing() {
         lastMsg = now;
         ++value;
 
-//    イベントのjsonデータをサーバと合意する
+        // イベントのjsonデータをサーバと合意する
         mqtt_ping(true);
         char msg[50];
     }
 }
 
 void subscribe_callback(String result) {
-//イベントの内容で判定
     Serial.println("get event");
     Serial.println(result);
 
-    // switch relay status
-    if (relay_enabled) {
-        Serial.println("power off");
-        digitalWrite(PIN_RELAY, LOW);
-        relay_enabled = false;
-    } else {
-        Serial.println("power on");
-        digitalWrite(PIN_RELAY, HIGH);
-        relay_enabled = true;
-    }
+    // TODO
+//    // switch relay status
+//    if (relay_enabled) {
+//        Serial.println("power off");
+//        digitalWrite(PIN_RELAY, LOW);
+//        relay_enabled = false;
+//    } else {
+//        Serial.println("power on");
+//        digitalWrite(PIN_RELAY, HIGH);
+//        relay_enabled = true;
+//    }
 
 }
 
 void loop() {
     eCONNECTION ret = mqtt_check_and_reconnect();
-//  if ()
+    if (ret != connectionStatus) {
+        // TODO 状態更新をcontrollerにおくる
+        connectionStatus = ret;
+    }
     mqtt_loop();
     handlePing();
 }
